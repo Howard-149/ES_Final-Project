@@ -1,18 +1,18 @@
-from ifttt import *
 from read_config import RC
-from server import *
+from state import State
+from server import startServer
+from Task import Task
 
 config_path = './config.ini'
-rc = RC(config_path)
 
-HOST = rc.getSocketIP()
-PORT = rc.getSocketPort()
+RC.initialize(config_path)
 
+State.changeUserState()
 
+HOST = RC.getSocketIP()
+PORT = RC.getSocketPort()
 
-# ret_msg = send_ifttt(rc.getIftttKey(),rc.getIftttEvent(),'0','0','0')
-# print(ret_msg)
-# startServer(HOST,PORT)
+startServer(HOST,PORT)
 
 
 

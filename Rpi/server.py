@@ -1,6 +1,7 @@
 import socket
 import json
 from Task import Task
+from ifttt import *
 
 def JsonLoading(conn):
     data = conn.recv(1024).decode('utf-8')
@@ -12,8 +13,11 @@ def JsonLoading(conn):
             choose += 1
         data = buffer_data[choose] + '}'
     obj = json.loads(data)
-    print(obj)
-    return obj
+    if "m" in obj.keys():
+        mode = "STM32_1"
+    else:
+        mode = "STM32_2"
+    return mode, obj
 
 def startServer(HOST,PORT):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -25,5 +29,5 @@ def startServer(HOST,PORT):
             print("Connected at", addr)
             print("Waiting for Task")
             while True:
-                obj = JsonLoading(conn)
-                Task(obj)
+                mode, obj = JsonLoading(conn)
+                Task(mode, obj)
