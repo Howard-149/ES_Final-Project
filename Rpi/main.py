@@ -3,9 +3,9 @@ from state import State
 from server import startServer
 from Task import Task
 
-config_path = './config.ini'
+# config_path = './config.ini'
 
-RC.initialize(config_path)
+RC.initialize()
 
 State.changeUserState()
 

@@ -14,6 +14,7 @@ class RC:
     def reRead(config_path = "./config.ini"):
         RC.cf = configparser.ConfigParser()
         RC.cf.read(config_path)
+        print(RC.cf.sections())
 
     # Get Socket Information
 
