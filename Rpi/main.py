@@ -5,14 +5,17 @@ from Task import Task
 
 # config_path = './config.ini'
 
-RC.initialize()
+if __name__ == '__main__':
+    RC.initialize()
+    if not RC.check():
+        exit(1)
 
-State.changeUserState()
+    State.changeUserState()
 
-HOST = RC.getSocketIP()
-PORT = RC.getSocketPort()
+    HOST = RC.getSocketIP()
+    PORT = RC.getSocketPort()
 
-startServer(HOST,PORT)
+    startServer(HOST,PORT)
 
 
 

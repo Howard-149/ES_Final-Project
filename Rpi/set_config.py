@@ -21,6 +21,7 @@ parser.add_argument("--user_phone_key", help = "Set User Phone Key", type = str)
 parser.add_argument("--set_user_phone_key", help = "Set User Phone Key by choosing your device", action="store_true")
 parser.add_argument("--user_ifttt_event", help = "Set User Ifttt Event", type = str)
 parser.add_argument("--user_ifttt_key", help = "Set User Ifttt Key", type = str)
+parser.add_argument("--user_line_key", help = "Set User Line Authorization Key", type = str)
 
 args = parser.parse_args()
 
@@ -85,6 +86,9 @@ if args.user_ifttt_event:
 
 if args.user_ifttt_key:
     setConfig('user','user_ifttt_key',args.user_ifttt_key)
+
+if args.user_line_key:
+    setConfig('user','user_line_key',args.user_line_key)
 
 if args.set_user_phone_key:
     setUserPhoneKey()

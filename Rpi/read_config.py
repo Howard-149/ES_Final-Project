@@ -3,6 +3,17 @@
 import configparser
 import os
 
+def setconfig_usage(parameter_name, parameter, example):
+    print("Please set config [{}] first".format(parameter_name))
+    print("command:")
+    print("     python set_config.py --{} {}".format(parameter,example))
+    return 
+
+def setconfig_usage(parameter_name, parameter):
+    print("Please set config [{}] first".format(parameter_name))
+    print("command:")
+    print("     python set_config.py --{}".format(parameter))
+
 class RC:
     
     cf = None
@@ -26,11 +37,15 @@ class RC:
     def getSocketPort():
         return int(RC.cf.get('socket info', 'port'))
 
+    @staticmethod
+    def getRawSocketPort():
+        return int(RC.cf.get('socket info', 'port'))
+
     # Get Bluetooth Information
 
     @staticmethod
     def getRSSIThreshold():
-        return [int(i) for i in RC.cf.get('bluetooth', 'rssi_threshold').split(',')]
+        return int(RC.cf.get('bluetooth', 'rssi_threshold'))
 
     # Get User Information
 
@@ -53,6 +68,35 @@ class RC:
     @staticmethod
     def getLineKey():
         return RC.cf.get('user','user_line_key')
+
+    @staticmethod
+    def check():
+        RC.reRead()
+        checking = True
+
+        
+
+        if RC.getSocketIP() == "None":
+            checking = False
+            setconfig_usage("ip","ip","XXX.XXX.XXX.XXX")
+
+        if RC.getRawSocketPort() == "None":
+            checking = False
+            setconfig_usage("port","port","[Int]")
+
+        if RC.getUserPhoneKey() == "None":
+            checking = False
+            setconfig_usage("phone MAC address","set_user_phone_key")
+
+        if RC.getLineKey() == "None":
+            checking = False
+            setconfig_usage("Line authorization key","user_line_key","[Your Line authorization key]")
+        
+
+
+        return checking
+
+
 
 
 if __name__ == '__main__':

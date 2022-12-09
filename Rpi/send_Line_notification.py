@@ -18,16 +18,17 @@ def sendLineMessage(token,message = None,image = None):
         data['message'] = '\n' + message 
 
     files = {}
-    if path.exists(image) :
-        files['imageFile'] = open(image, 'rb')
-    else:
-        r = requests.get(image, stream = True)
-        if r.status_code == 200 :
-            r.raw.decode_content = True
-            with open(filename,'wb') as f:
-                shutil.copyfileobj(r.raw, f)
+    if image != None:
+        if path.exists(image) :
+            files['imageFile'] = open(image, 'rb')
+        else:
+            r = requests.get(image, stream = True)
+            if r.status_code == 200 :
+                r.raw.decode_content = True
+                with open(filename,'wb') as f:
+                    shutil.copyfileobj(r.raw, f)
 
-            files['imageFile'] = open(filename,'rb')
+                files['imageFile'] = open(filename,'rb')
             
     requests.post(
         url,
@@ -36,8 +37,9 @@ def sendLineMessage(token,message = None,image = None):
         files = files
     )
 
-    files['imageFile'].close()
-    remove('./' + filename)
+    if image != None:
+        files['imageFile'].close()
+        remove('./' + filename)
 
 
 if __name__ == "__main__":
