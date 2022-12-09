@@ -1,7 +1,7 @@
 import argparse
 import configparser
-import numpy as np
-import copy
+
+import os
 
 from bt_full import *
 
@@ -25,7 +25,10 @@ parser.add_argument("--user_line_key", help = "Set User Line Authorization Key",
 
 args = parser.parse_args()
 
+doSomething = False
+
 def setConfig(node,key,newValue):
+    doSomething = True
     conf.set(node, key, newValue)
     fh = open(config_path, 'w')
     conf.write(fh)
@@ -93,3 +96,5 @@ if args.user_line_key:
 if args.set_user_phone_key:
     setUserPhoneKey()
 
+if not doSomething :
+    os.system("python set_config.py --h")

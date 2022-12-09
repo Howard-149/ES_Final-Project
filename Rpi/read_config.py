@@ -71,10 +71,11 @@ class RC:
 
     @staticmethod
     def check():
+
         RC.reRead()
         checking = True
 
-        
+        print('\n\n')
 
         if RC.getSocketIP() == "None":
             checking = False
@@ -86,13 +87,20 @@ class RC:
 
         if RC.getUserPhoneKey() == "None":
             checking = False
-            setconfig_usage("phone MAC address","set_user_phone_key")
+            print("Please set config [{}] first".format("phone MAC address"))
+            print("command:")
+            print("     python set_config.py --{}".format("set_user_phone_key"))
+            print("     python set_config.py --{} {}".format("user_phone_key","[Your phone MAC address]"))
 
         if RC.getLineKey() == "None":
             checking = False
             setconfig_usage("Line authorization key","user_line_key","[Your Line authorization key]")
         
-
+        if not checking:
+            print("######################################################################")
+            print("More information for setting config :")
+            os.system('python set_config.py --help')
+        
 
         return checking
 
