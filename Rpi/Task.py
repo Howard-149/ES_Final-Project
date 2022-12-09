@@ -1,6 +1,6 @@
 from ifttt import send_ifttt
 from state import State
-
+from bt_full import getUserState
 
 def getRSSI():
     return 0

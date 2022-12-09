@@ -1,0 +1,9 @@
+accuracy of twelve-shot on en : 0.5411177644710579
+accuracy of twelve-shot on fr : 0.5157684630738523
+accuracy of twelve-shot on ru : 0.45848303393213574
+accuracy of twelve-shot on zh : 0.43353293413173655
+accuracy of twelve-shot on hi : 0.44451097804391215
+accuracy of twelve-shot on ur : 0.39181636726546903
+accuracy of twelve-shot on bg : 0.49201596806387227
+accuracy of twelve-shot on vi : 0.48243512974051894
+

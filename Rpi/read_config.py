@@ -1,6 +1,7 @@
 # [reference] https://iter01.com/539736.html
 
 import configparser
+import os
 
 class RC:
     
@@ -26,6 +27,12 @@ class RC:
     def getSocketPort():
         return int(RC.cf.get('socket info', 'port'))
 
+    # Get Bluetooth Information
+
+    @staticmethod
+    def getRSSIThreshold():
+        return [int(i) for i in RC.cf.get('bluetooth', 'rssi_threshold').split(',')]
+
     # Get User Information
 
     @staticmethod
@@ -43,3 +50,7 @@ class RC:
     @staticmethod
     def getIftttKey():
         return RC.cf.get('user','user_ifttt_key')
+
+
+if __name__ == '__main__':
+    os.system("cat ./config.ini")

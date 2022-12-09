@@ -24,8 +24,8 @@ import matplotlib.pyplot as plot
 #     def get(self):
 #         return self.data
 
-HOST = '' # IP address
-PORT = 6533 # Port to listen on (use ports > 1023)
+HOST = '192.168.183.82' # IP address
+PORT = 6531 # Port to listen on (use ports > 1023)
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))

@@ -7,6 +7,9 @@ import fcntl
 import time
 import sys
 
+import argparse
+from read_config import *
+
 BT_ADDR=''
 
 class BluetoothRSSI(object):
@@ -50,7 +53,7 @@ class BluetoothRSSI(object):
             rssi = bt.hci_send_req(
                 self.hci_sock, bt.OGF_STATUS_PARAM,
                 bt.OCF_READ_RSSI, bt.EVT_CMD_COMPLETE, 4, self.cmd_pkt)
-            print(rssi)
+            # print(rssi)
             if rssi[0]==2:
                 print("disconnected")
                 self.connected=False
@@ -61,6 +64,7 @@ class BluetoothRSSI(object):
             # Happens if connection fails (e.g. device is not in range)
             self.connected = False
             return 1000
+
 
 def scan():
 
@@ -73,6 +77,7 @@ def scan():
     print(number_of_devices,"devices found")
     num=0
     addrlist=[]
+
     for addr, name, device_class in devices:
 
         print("\n")
@@ -86,14 +91,16 @@ def scan():
         print("Device Class: %s" % (device_class))
 
         print("\n")
+
         addrlist.append(addr)
         num+=1
-
+    
     key=int(input("Enter your device number: "))
+    
     global BT_ADDR 
     BT_ADDR= addrlist[key]
     print("BT_ADDR = %s" %(BT_ADDR))
-    return 
+    return
 
 #BT_ADDR = '78:F2:38:09:8D:5B'  # You can put your Bluetooth address here
 #NUM_LOOP = 5
@@ -102,38 +109,26 @@ def print_usage():
      print  ("Usage: python test_address.py <bluetooth-address> [number-of-requests]")
 
 def detect_rssi():
-    print("main")
-    #if len(sys.argv) > 1:
-    #   addr = sys.argv[1]
-    #elif BT_ADDR:
-    #    addr = BT_ADDR
-    #else:
-    #    print_usage()
-    #    return
-    #if len(sys.argv) == 3:
-    #    num = int(sys.argv[2])
-    #else:
-    #    num = NUM_LOOP
-    addr=BT_ADDR
+    addr=RC.getUserPhoneKey()
     btrssi = BluetoothRSSI(addr=addr)
-    #for i in range(0, num):
-    while(1):
-        avg=0
-        for i in range(0,10):
-            print("rssi:")
-            print (btrssi.get_rssi())
-            avg+=btrssi.get_rssi()
-            time.sleep(0.2)
-        print("\n\n\n")
-        if avg>100:
-            print("can't detect key")
-            detect_rssi()
-        elif avg>-10:
-            print ("inside the room")
-        else:
-            print("at the door")
+    avg=0
+    for i in range(0,10):
+        # print("rssi:", btrssi.get_rssi())
+        avg+=btrssi.get_rssi()
+        time.sleep(0.2)
+    if avg>100:
+        return "can't detect key"
+    elif avg>-10:
+        return "inside the room"
+    else:
+        return "at the door"
+
+def getUserState():
+    if RC.getUserPhoneKey()=="None":
+        return "can't detect key"
+    return detect_rssi()
 
 
 if __name__ == '__main__':
-    scan()
-    detect_rssi()
+    RC.initialize()
+    print(getUserState())

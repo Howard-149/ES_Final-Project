@@ -3,6 +3,8 @@ import configparser
 import numpy as np
 import copy
 
+from bt_full import *
+
 conf = configparser.ConfigParser()
 config_path = "config.ini"
 conf.read(config_path)
@@ -16,6 +18,7 @@ parser.add_argument("--port", help = "Set Socket Port", type = str)
 # section: user
 parser.add_argument("--user_name", help = "Set User Name", type = str)
 parser.add_argument("--user_phone_key", help = "Set User Phone Key", type = str)
+parser.add_argument("--set_user_phone_key", help = "Set User Phone Key by choosing your device", action="store_true")
 parser.add_argument("--user_ifttt_event", help = "Set User Ifttt Event", type = str)
 parser.add_argument("--user_ifttt_key", help = "Set User Ifttt Key", type = str)
 
@@ -26,6 +29,44 @@ def setConfig(node,key,newValue):
     fh = open(config_path, 'w')
     conf.write(fh)
     fh.close()
+
+def setUserPhoneKey():
+    print("Scanning for bluetooth devices:")
+
+    devices = bluetooth.discover_devices(lookup_names = True, lookup_class = True)
+
+    number_of_devices = len(devices)
+
+    print(number_of_devices,"devices found")
+    num=0
+    addrlist = []
+    namelist = []
+    for addr, name, device_class in devices:
+
+        print("\n")
+
+        print("Device number: %d" %(num))
+
+        print("Device Name: %s" % (name))
+
+        print("Device MAC Address: %s" % (addr))
+
+        print("Device Class: %s" % (device_class))
+
+        print("\n")
+        addrlist.append(addr)
+        namelist.append(name)
+        num+=1
+    if num == 0:
+        print("Find no device")
+        return
+    key=int(input("Enter your device number: "))
+    addr = addrlist[key]
+    name = namelist[key]
+    setConfig('user','user_name',name)
+    setConfig('user','user_phone_key',addr)
+    return 
+
 
 if args.ip:
     setConfig('socket info','ip',args.ip)
@@ -44,3 +85,7 @@ if args.user_ifttt_event:
 
 if args.user_ifttt_key:
     setConfig('user','user_ifttt_key',args.user_ifttt_key)
+
+if args.set_user_phone_key:
+    setUserPhoneKey()
+
