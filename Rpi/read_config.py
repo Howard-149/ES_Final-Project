@@ -15,7 +15,6 @@ class RC:
     def reRead(config_path = "./config.ini"):
         RC.cf = configparser.ConfigParser()
         RC.cf.read(config_path)
-        print(RC.cf.sections())
 
     # Get Socket Information
 
@@ -50,6 +49,10 @@ class RC:
     @staticmethod
     def getIftttKey():
         return RC.cf.get('user','user_ifttt_key')
+
+    @staticmethod
+    def getLineKey():
+        return RC.cf.get('user','user_line_key')
 
 
 if __name__ == '__main__':

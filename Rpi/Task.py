@@ -1,11 +1,12 @@
 from ifttt import send_ifttt
 from state import State
-from bt_full import getUserState
+import bt_full as BT
 
 def getRSSI():
     return 0
 
 def thief():
+    print("Probably thief get in !!!")
     return
 
 def Task(mode, obj):
@@ -15,9 +16,13 @@ def Task(mode, obj):
     # message : {"door opening", "door closing", "door stopped"}
     if message == "door opening":
         if State.getUserState() == "Not At Home":
-            RSSI = getRSSI()
-            if RSSI >= 0:
+            RSSI = BT.detect_rssi()
+            if RSSI == "can't detect key":
                 thief()
+            else:
+                print("rssi start =",RSSI)
+                print("message =",message)
+                
     elif message == "door closing":
         if State.getUserState() == "At Home":
             RSSI = getRSSI()
