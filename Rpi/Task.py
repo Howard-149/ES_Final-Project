@@ -1,3 +1,5 @@
+import json
+
 from state import State
 
 import bt_full as BT
@@ -12,7 +14,14 @@ def thief():
     sendLineMessage(RC.getLineKey(),"Probably thief get in !!!")
     return
 
-def Task(mode, obj):
+def Task(mode, obj, conn):
+
+    if mode == "Phone":
+        data = json.dumps(RC.cf).encode('utf-8') + b'\n'
+        conn.send(data)
+        return 
+
+
     # received data: int len = sprintf(acc_json,"{\"h\":%f,\"t\":%f,\"m\":%s}",humidity,temprature,message);
     humidity, temprature, message = obj['h'], obj['t'], obj['m']
     

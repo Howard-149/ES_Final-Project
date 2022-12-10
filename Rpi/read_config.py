@@ -1,6 +1,7 @@
 # [reference] https://iter01.com/539736.html
 
 import configparser
+import json
 import os
 
 def setconfig_usage(parameter_name, parameter, example):
@@ -19,55 +20,55 @@ class RC:
     cf = None
 
     @staticmethod
-    def initialize(config_path = "./config.ini"):
+    def initialize(config_path = "./config.json"):
         RC.reRead(config_path)
 
     @staticmethod
-    def reRead(config_path = "./config.ini"):
-        RC.cf = configparser.ConfigParser()
-        RC.cf.read(config_path)
+    def reRead(config_path = "./config.json"):
+        with open("./config.json","rb") as f:
+            RC.cf = json.load(f)
 
     # Get Socket Information
 
     @staticmethod
     def getSocketIP():
-        return RC.cf.get('socket info', 'ip')
+        return RC.cf['socket info']['ip']
     
     @staticmethod
     def getSocketPort():
-        return int(RC.cf.get('socket info', 'port'))
+        return int(RC.cf['socket info']['port'])
 
     @staticmethod
     def getRawSocketPort():
-        return int(RC.cf.get('socket info', 'port'))
+        return RC.cf['socket info']['port']
 
     # Get Bluetooth Information
 
     @staticmethod
     def getRSSIThreshold():
-        return int(RC.cf.get('bluetooth', 'rssi_threshold'))
+        return RC.cf['bluetooth']['rssi_threshold']
 
     # Get User Information
 
     @staticmethod
     def getUserName():
-        return RC.cf.get('user','user_name')
+        return RC.cf['user']['user_name']
 
     @staticmethod
     def getUserPhoneKey():
-        return RC.cf.get('user','user_phone_key')
+        return RC.cf['user']['user_phone_key']
 
     @staticmethod
     def getIftttEvent():
-        return RC.cf.get('user','user_ifttt_event')
+        return RC.cf['user']['user_ifttt_event']
 
     @staticmethod
     def getIftttKey():
-        return RC.cf.get('user','user_ifttt_key')
+        return RC.cf['user']['user_ifttt_key']
 
     @staticmethod
     def getLineKey():
-        return RC.cf.get('user','user_line_key')
+        return RC.cf['user']['user_line_key']
 
     @staticmethod
     def check():
@@ -108,4 +109,4 @@ class RC:
 
 
 if __name__ == '__main__':
-    os.system("cat ./config.ini")
+    os.system("jq . ./config.json")

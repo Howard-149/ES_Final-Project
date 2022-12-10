@@ -1,13 +1,13 @@
 import argparse
-import configparser
+import json
 
 import os
 
 from bt_full import *
 
-conf = configparser.ConfigParser()
-config_path = "config.ini"
-conf.read(config_path)
+config_path = "./config.json"
+with open(config_path,"rb") as f:
+    conf = json.load(f)
 
 parser = argparse.ArgumentParser()
 
@@ -28,13 +28,17 @@ args = parser.parse_args()
 doSomething = False
 
 def setConfig(node,key,newValue):
+    global doSomething
     doSomething = True
-    conf.set(node, key, newValue)
-    fh = open(config_path, 'w')
-    conf.write(fh)
-    fh.close()
+    conf[node][key] = newValue
+    with open(config_path,'w') as f:
+        json.dump(conf,f)
+
 
 def setUserPhoneKey():
+    global doSomething
+    doSomething = True
+
     print("Scanning for bluetooth devices:")
 
     devices = bluetooth.discover_devices(lookup_names = True, lookup_class = True)
