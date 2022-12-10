@@ -5,7 +5,7 @@ from ifttt import *
 
 def JsonLoading(conn):
     data = conn.recv(1024).decode('utf-8')
-    print("Received from socket server:", data)
+    print("Received from socket client:", data)
     if (data.count('{') != 1):
         return "Error", {}
         # choose = 0
@@ -16,8 +16,9 @@ def JsonLoading(conn):
     obj = json.loads(data)
     if "m" in obj.keys():
         mode = "STM32_1"
-    elif 'name' in obj.keys():
-        mode = "Phone"
+    elif 'client' in obj.keys():
+        if obj['client'] == 'Phone':
+            mode = obj['task']
     else:
         mode = "STM32_2"
     return mode, obj
@@ -34,6 +35,7 @@ def startServer(HOST,PORT):
                 print("Waiting for Task")
                 while True:
                     mode, obj = JsonLoading(conn)
+                    print(mode,obj)
                     if mode == "Error":
                         break
                     Task(mode, obj, conn)
