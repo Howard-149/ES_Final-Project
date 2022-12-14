@@ -1,4 +1,4 @@
-
+//STM32_2
 #include "mbed.h"
 #include "wifi_helper.h"
 #include <string>
@@ -76,95 +76,39 @@ public:
             printf("Error! _socket.connect() returned: %d\r\n", result);
             return;
         }
-
+        char acc_json[1024] ;
+        int len = sprintf(acc_json,"{\"client\":\"STM32_2\"}");
+        nsapi_size_or_error_t response = 0;
+        response = _socket.send(acc_json,len);
         /* exchange an HTTP request and response */
         //sensor part//
-        float sensor_value = 0;
-        int16_t pDataXYZ[3] = {0};
-        float pGyroDataXYZ[3] = {0};
-        int sample_num=0;
+
        
-        BSP_GYRO_Init();
-        BSP_ACCELERO_Init();
         BSP_TSENSOR_Init();
-        //remove offset
-        float avgx=0,avgy=0,avgz=0;
-        float avggx=0,avggy=0,avggz=0;
-        for(int i=0;i<20;i++){
-            BSP_ACCELERO_AccGetXYZ(pDataXYZ);
-            float x = pDataXYZ[0], y = pDataXYZ[1], z = pDataXYZ[2];
-            avgx+=x;
-            avgy+=y;
-            avgz+=z;
-            BSP_GYRO_GetXYZ(pGyroDataXYZ);
-            float gx = pGyroDataXYZ[0], gy = pGyroDataXYZ[1], gz = pGyroDataXYZ[2];
-            avggx+=gx;
-            avggy+=gy;
-            avggz+=gz;
-        }
-        avgx/=20;
-        avgy/=20;
-        avgz/=20;
-        avggx/=20;
-        avggy/=20;
-        avggz/=20;
-        // printf("avgx,y,z=%f,%f,%f",avgx,avgy,avgz);
-        int cnt=0;
-        int start=0;
-        int last_state=-1; //-1 start 0 stopped 1 opening 2 closing
+
 
         while (1){
-            // ++sample_num;
-            BSP_ACCELERO_AccGetXYZ(pDataXYZ);
-            float x = pDataXYZ[0], y = pDataXYZ[1], z = pDataXYZ[2];
-            BSP_GYRO_GetXYZ(pGyroDataXYZ);
-            float gx = pGyroDataXYZ[0], gy = pGyroDataXYZ[1], gz = pGyroDataXYZ[2];
+            char indata[1024];
+            _socket.recv(indata,1024);
+            int in_len = sizeof(indata) / sizeof(indata[0]);
+            char answer[1024]="Send Outdoor Data" ;
+            bool send=1;
+            for(int i=0;i<in_len;i++){
+                if(indata[i]!=answer[i]){
+                    printf("Not Correct");
+                    send=0;
+                    break;
+                }
+            }
+
             float temprature = BSP_TSENSOR_ReadTemp();
             float humidity=BSP_HSENSOR_ReadHumidity();
             char acc_json[1024];
-            char message[1024];
-            bool send=1;
-            if((x-avgx)*(x-avgx)+(y-avgy)*(y-avgy)>=20){
-                if(cnt==0){
-                    start=y-avgy;
-                }
-                cnt++;
-                if(cnt>=8){
-                    if(start>0){
-                        if(last_state==1){
-                            send=0;
-                        }
-                        sprintf(message,"\"door opening\"");
-                        last_state=1;
-                    }
-                    else{
-                        if(last_state==2){
-                            send=0;
-                        }
-                        sprintf(message,"\"door closing\"");
-                        last_state=2;
-                    }
-                }
-                else{
-                    if(last_state==0){
-                        send=0;
-                    }
-                    sprintf(message,"\"door stopped\"");
-                    last_state=0;
-                }
-            }
-            else{
-                cnt=0;
-                if(last_state==0){
-                    send=0;
-                }
-                sprintf(message,"\"door stopped\"");
-                last_state=0;
-            }
-            int len = sprintf(acc_json,"{\"h\":%f,\"t\":%f,\"m\":%s}",humidity,temprature,message);
-            // int len = sprintf(acc_json,"{\"x\":%f,\"y\":%f,\"z\":%f,\"gx\":%f,\"gy\":%f,\"gz\":%f,\"s\":%d,\"m\":%s}",(float)((int)((x-avgx)*10000))/10000,(float)((int)((y-avgy)*10000))/10000, (float)((int)((z-avgz)*10000))/10000,gx-avggx,gy-avggy,gz-avggz,sample_num,message);
+            
+            int len = sprintf(acc_json,"{\"h\":%f,\"t\":%f}",humidity,temprature);
+           
             if(send!=0){
-                nsapi_size_or_error_t response = 0;
+            nsapi_size_or_error_t response = 0;
                 response = _socket.send(acc_json,len);
                 if (0 >= response){
                     printf("Error seding: %d\n", response);
@@ -172,7 +116,6 @@ public:
                     break;
                 }
             }
-            
             ThisThread::sleep_for(200ms);
         } 
 

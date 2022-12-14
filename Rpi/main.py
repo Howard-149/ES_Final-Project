@@ -10,7 +10,7 @@ if __name__ == '__main__':
     if not RC.check():
         exit(1)
 
-    State.changeUserState()
+    # State.changeUserState()
 
     HOST = RC.getSocketIP()
     PORT = RC.getSocketPort()

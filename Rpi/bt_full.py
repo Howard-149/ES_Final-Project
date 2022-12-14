@@ -111,16 +111,20 @@ def print_usage():
 def detect_rssi():
     addr=RC.getUserPhoneKey()
     btrssi = BluetoothRSSI(addr=addr)
+    BT_threshold=float(RC.getRSSIThreshold())
     avg=0
     for i in range(0,10):
-        # print("rssi:", btrssi.get_rssi())
+        print("rssi:", btrssi.get_rssi())
         avg+=btrssi.get_rssi()
         time.sleep(0.2)
-    if avg>100:
+    if avg>700:
+        print("can't detect key")
         return "can't detect key"
-    elif avg>-10:
+    elif avg>BT_threshold:
+        print("inside the room")
         return "inside the room"
     else:
+        print("at the door")
         return "at the door"
 
 def getUserState():
