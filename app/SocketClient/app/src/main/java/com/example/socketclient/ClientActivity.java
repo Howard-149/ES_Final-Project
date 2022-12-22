@@ -101,10 +101,6 @@ public class ClientActivity extends AppCompatActivity { //主執行緒，也稱U
     }
 
 
-//    List<String> keys = Arrays.asList(new String[]{"client","task"});
-//    List<String> values = Arrays.asList(new String[]{"Phone","phone requests for setting user key"});
-//    connect(keys,values);
-
     public void sendJSON(String... strList) {
         List<String> keys = new ArrayList();
         List<String> values = new ArrayList();
@@ -165,7 +161,7 @@ public class ClientActivity extends AppCompatActivity { //主執行緒，也稱U
 
     }
 
-    // 初始化client
+
     private void init_client() {
 
         Intent it = this.getIntent();
@@ -185,7 +181,7 @@ public class ClientActivity extends AppCompatActivity { //主執行緒，也稱U
             }
         }
 
-        //啟動client
+
         clientThread = new ClientThread();
         clientThread.start();
 
@@ -208,7 +204,7 @@ public class ClientActivity extends AppCompatActivity { //主執行緒，也稱U
         sendDataThread.start();
     }
 
-    class ClientThread extends Thread{ //一般執行緒，可執行所有雜事，可存取網路，禁止更新UI介面
+    class ClientThread extends Thread{ 
 
         String input;
         String output;
@@ -358,14 +354,6 @@ public class ClientActivity extends AppCompatActivity { //主執行緒，也稱U
         @Override
         public void run() {
             try{
-//                Map map=new HashMap();
-//                map.put("msg", msg);
-//
-//                JSONObject value = new JSONObject(map);
-//                byte[] jsonByte = (value.toString()+"\n").getBytes();
-//
-//                write.write(jsonByte);
-//                write.flush();
 
                 Map map = new HashMap();
                 if(!mode.equals(""))

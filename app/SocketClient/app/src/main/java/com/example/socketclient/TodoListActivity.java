@@ -86,11 +86,6 @@ public class TodoListActivity extends AppCompatActivity implements DialogCloseLi
         init_callback();
         init_socket();
 
-//        taskList.add(newTask(1,0,"Test1"));
-//        taskList.add(newTask(1,0,"Test2"));
-//        taskList.add(newTask(1,0,"Test3"));
-//        updateToDoList();
-
 
     }
 
