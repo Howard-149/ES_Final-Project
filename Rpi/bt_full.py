@@ -55,7 +55,7 @@ class BluetoothRSSI(object):
                 bt.OCF_READ_RSSI, bt.EVT_CMD_COMPLETE, 4, self.cmd_pkt)
             # print(rssi)
             if rssi[0]==2:
-                print("disconnected")
+                # print("disconnected")
                 self.connected=False
                 return 1000
             rssi = struct.unpack('b', rssi[3].to_bytes(1, byteorder='big'))[0]
@@ -114,7 +114,7 @@ def detect_rssi():
     BT_threshold=float(RC.getRSSIThreshold())
     avg=0
     for i in range(0,10):
-        print("rssi:", btrssi.get_rssi())
+        # print("rssi:", btrssi.get_rssi())
         avg+=btrssi.get_rssi()
         time.sleep(0.2)
     if avg>700:

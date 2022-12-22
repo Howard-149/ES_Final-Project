@@ -11,7 +11,7 @@ class State:
         
     @staticmethod
     def getUserState():
-        return State.userAllStates[0] if State.atHome else State.userAllStates[1]
+        return State.userAllStates[0] if State.atHome==True else State.userAllStates[1]
 
     @staticmethod
     def changeUserState():

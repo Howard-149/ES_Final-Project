@@ -35,7 +35,10 @@ def accept_client():
         elif obj['client']=='Phone':
             conn_dict['Phone']=conn
             addr_dict['Phone']=addr
-            continue
+            thread=Thread(target=message_handle_phone, args=(conn_dict['Phone'],addr_dict['Phone']))
+            thread.setDaemon(True)
+            thread.start()
+
         else:
             print('error')
 
@@ -76,6 +79,19 @@ def message_handle(conn,addr):
         thread=Thread(target=Task, args=(mode,obj,conn_dict))
         thread.setDaemon(True)
         thread.start()
+
+def message_handle_phone(conn,addr):
+    # print("Connected at", addr)
+    print("Waiting for Task")
+    while True:
+        mode, obj = JsonLoading(conn)
+        print(mode,obj)
+        if mode == "Error":
+            break
+        Task(mode,obj,conn_dict)
+        
+
+
 
 
 

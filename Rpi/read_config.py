@@ -4,7 +4,7 @@ import configparser
 import json
 import os
 
-def setconfig_usage(parameter_name, parameter, example):
+def setconfig_usage_with_example(parameter_name, parameter, example):
     print("Please set config [{}] first".format(parameter_name))
     print("command:")
     print("     python set_config.py --{} {}".format(parameter,example))
@@ -62,9 +62,9 @@ class RC:
     def getIftttEvent():
         return RC.cf['user']['user_ifttt_event']
 
-    @staticmethod
-    def getIftttKey():
-        return RC.cf['user']['user_ifttt_key']
+    # @staticmethod
+    # def getIftttKey():
+    #     return RC.cf['user']['user_ifttt_key']
 
     @staticmethod
     def getLineKey():
@@ -80,11 +80,11 @@ class RC:
 
         if RC.getSocketIP() == "None":
             checking = False
-            setconfig_usage("ip","ip","XXX.XXX.XXX.XXX")
+            setconfig_usage_with_example("ip","ip","XXX.XXX.XXX.XXX")
 
         if RC.getRawSocketPort() == "None":
             checking = False
-            setconfig_usage("port","port","[Int]")
+            setconfig_usage_with_example("port","port","[Int]")
 
         if RC.getUserPhoneKey() == "None":
             checking = False
@@ -95,7 +95,7 @@ class RC:
 
         if RC.getLineKey() == "None":
             checking = False
-            setconfig_usage("Line authorization key","user_line_key","[Your Line authorization key]")
+            setconfig_usage_with_example("Line authorization key","user_line_key","[Your Line authorization key]")
         
         if not checking:
             print("######################################################################")

@@ -1,16 +1,1 @@
-{
-    "socket info": {
-      "ip": "192.168.137.5",
-      "port": "6531"
-    },
-    "user": {
-      "user_name": "None",
-      "user_phone_key": "None",
-      "user_ifttt_event": "send_msg_to_Line",
-      "user_ifttt_key": "dKIS-7CPMgBGh-_VwxoRFO",
-      "user_line_key": "dOkC46UJeLY1PC3OlFCIFxRh5Y997BNXe3JA2ydHLxU"
-    },
-    "bluetooth": {
-      "rssi_threshold": "-10"
-    }
-  }
+{"socket info": {"ip": "192.168.137.82", "port": "6533"}, "user": {"user_name": "\u6684\u7693\u7684S22 Ultra", "user_phone_key": "78:F2:38:09:8D:5B", "user_line_key": "LRgjmUDDQj9BMekgj2XWi2dtlNnsQwqBbwWGGnwsKVM"}, "bluetooth": {"rssi_threshold": "-1.0"}}

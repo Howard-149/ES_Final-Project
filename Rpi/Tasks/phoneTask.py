@@ -2,30 +2,10 @@ import os
 import time
 import pexpect
 import json
-import threading
 
-from state import State
-import bt_full as BT
-from send_Line_notification import sendLineMessage
 from read_config import RC
 
-
-mutex = threading.Lock()
-mutex.acquire()
-out_humidity, out_temprature=0,0
-
-
-def thief(action):
-    print("Someone get in!!!")
-    print("Probably thief {} the door!!!".format(action))
-    sendLineMessage(RC.getLineKey(),"Someone get in!\nProbably thief {} the door !!!".format(action),
-    "https://images.twgreatdaily.com/images/image/cZM/cZM9CW8BMH2_cNUgCq82.jpg")
-    return
-
-def Task(mode, obj, conn_dict):
-    global mutex
-    global out_humidity, out_temprature
-
+def phoneTask(mode, obj, conn_dict):
     if mode == "phone requests for config":
         data = json.dumps(RC.cf).encode('utf-8') + b'\n'
         conn_dict['Phone'].send(data)
@@ -154,70 +134,3 @@ def Task(mode, obj, conn_dict):
         conn_dict['Phone'].send(data)
 
         return
-
-    elif mode == "STM32_1":
-        # received data: int len = sprintf(acc_json,"{\"h\":%f,\"t\":%f,\"m\":%s}",humidity,temprature,message);
-        humidity, temprature, message = obj['h'], obj['t'], obj['m']
-        print(State.getUserState())
-        # message : {"door opening", "door closing", "door stopped"}
-        if message == "door opening":
-            if State.getUserState() == "Not At Home":
-                RSSI = BT.detect_rssi()
-                if RSSI == "can't detect key":      # Someone gets in while you're out
-                    thief("open")
-                else:
-                    print("rssi start =",RSSI)      # User arrives home
-                    # print("message =",message)
-            else:
-                RSSI=BT.detect_rssi()
-                if RSSI == "can't detect key":
-                    State.atHome=False              # Probably something wrong, reset state to "Not at home"
-        elif message == "door closing":
-            if State.getUserState() == "At Home":
-                RSSI = BT.detect_rssi()
-                if RSSI == "at the door" : #leave home
-                    conn_dict['STM32_2'].sendall("Send Outdoor Data".encode(encoding='utf8'))
-                    mutex.acquire()
-                    State.changeUserState()     # change to "Not at home"
-                    # print("in STM32_1")
-                    # print("out_humidity=%f  out_temprature=%f "%(out_humidity,out_temprature))
-                    line_message = "[INDOOR]\n    humidity:{}\n    temprature:{}\n[OUTDOOR]\n    humidity:{}\n    temprature:{}\n".format(humidity,temprature,out_humidity,out_temprature)
-
-                    if out_humidity >= 50:
-                        line_message += "\nPlease remember to bring the umbrella with you^^\n"
-
-                    # line_message="humidity:%d temprature:%d out door humidity:%d outdoor temprature:%d"%(humidity,temprature,out_humidity,out_temprature)
-                    sendLineMessage(RC.getLineKey(),line_message)
-                elif RSSI=="can't detect key":
-                    State.changeUserState()
-                else:
-                    # print("Seems it needs to do nothing")
-                    '''
-                    maybe:
-                        Someone gets out when you're at home
-                        [Needs to be corrected somewhere]
-                            Error: you're at the door and going out
-                    '''
-            else:
-                RSSI=BT.detect_rssi()
-                if RSSI == "at the door" : #back to home
-                    State.changeUserState()
-                elif RSSI=="inside the room":       # correct state
-                    State.atHome=True
-                else :
-                    thief("close")
-
-        elif message == "door stopped":
-            print(message)
-
-        else:
-            print("Error when receiving data")
-            exit(1)
-
-        State.addDoorState(message)
-        return 
-
-
-    elif mode == "STM32_2": 
-        out_humidity,out_temprature = obj['h'],obj['t']
-        mutex.release()
