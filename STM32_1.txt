@@ -118,7 +118,7 @@ public:
                     start=y-avgy;
                 }
                 cnt++;
-                if(cnt>=8){
+                if(cnt>=10){
                     if(start>0){
                         if(last_state==1){
                             send=0;
@@ -162,7 +162,7 @@ public:
                     break;
                 }
             }
-            ThisThread::sleep_for(200ms);
+            ThisThread::sleep_for(100ms);
         } 
 
 
