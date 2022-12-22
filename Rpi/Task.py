@@ -82,9 +82,9 @@ def Task(mode, obj, conn_dict):
         print("Waiting for user to input line key...")
 
         while True:
-            print("here")
+            # print("here")
             data = conn_dict['Phone'].recv(1024).decode('utf-8')
-            print("---" + data + "---")
+            # print("---" + data + "---")
             obj = json.loads(data)
             print(obj, 'msg' in obj.keys())
             if 'msg' in obj.keys():
@@ -154,7 +154,7 @@ def Task(mode, obj, conn_dict):
         # time.sleep(3)
 
         RC.reRead()
-        print(RC.cf)
+        # print(RC.cf)
         data = json.dumps(RC.cf).encode('utf-8') + b'\n'
         conn_dict['Phone'].send(data)
         
@@ -204,9 +204,9 @@ def Task(mode, obj, conn_dict):
                 RSSI = BT.detect_rssi()
                 if RSSI == "can't detect key":      # Someone gets in while you're out
                     thief("open")
-                else:
-                    print("rssi start =",RSSI)      # User arrives home
-                    print("message =",message)
+                # else:
+                    # print("rssi start =",RSSI)      # User arrives home
+                    # print("message =",message)
             else:
                 RSSI=BT.detect_rssi()
                 if RSSI == "can't detect key":
@@ -239,8 +239,8 @@ def Task(mode, obj, conn_dict):
                     ###################################################################
                 elif RSSI=="can't detect key":
                     State.changeUserState()
-                else:
-                    print("Seems it needs to do nothing")
+                # else:
+                    # print("Seems it needs to do nothing")
                     '''
                     maybe:
                         Someone gets out when you're at home
