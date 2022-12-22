@@ -15,11 +15,9 @@ mutex.acquire()
 out_humidity, out_temprature=0,0
 
 
-def thief(action):
-    print("Someone get in!!!")
-    print("Probably thief {} the door!!!".format(action))
-    sendLineMessage(RC.getLineKey(),"Someone get in!\nProbably thief {} the door !!!".format(action),
-    "https://images.twgreatdaily.com/images/image/cZM/cZM9CW8BMH2_cNUgCq82.jpg")
+def thief():
+    print("Probably thief get in !!!")
+    sendLineMessage(RC.getLineKey(),"Probably thief get in !!!")
     return
 
 def Task(mode, obj, conn_dict):
@@ -27,6 +25,7 @@ def Task(mode, obj, conn_dict):
     global out_humidity, out_temprature
 
     if mode == "phone requests for config":
+        RC.reRead()
         data = json.dumps(RC.cf).encode('utf-8') + b'\n'
         conn_dict['Phone'].send(data)
         return 
@@ -61,7 +60,13 @@ def Task(mode, obj, conn_dict):
 
         process.expect(pexpect.EOF)
         print("END of set phone key")
-        return 
+
+        time.sleep(5)
+        RC.reRead()
+        data = json.dumps(RC.cf).encode('utf-8') + b'\n'
+        conn_dict['Phone'].send(data)
+
+        return
 
     elif mode == "phone requests for setting user line key":
 
@@ -143,10 +148,8 @@ def Task(mode, obj, conn_dict):
 
         #############################################################################
 
-        time.sleep(2)
 
-        print("done")
-        conn_dict['Phone'].send(json.dumps({"task":"done"}).encode('utf-8')+b'\n')
+        time.sleep(3)
 
         RC.reRead()
         print(RC.cf)
@@ -164,10 +167,10 @@ def Task(mode, obj, conn_dict):
             if State.getUserState() == "Not At Home":
                 RSSI = BT.detect_rssi()
                 if RSSI == "can't detect key":      # Someone gets in while you're out
-                    thief("open")
+                    thief()
                 else:
                     print("rssi start =",RSSI)      # User arrives home
-                    # print("message =",message)
+                    print("message =",message)
             else:
                 RSSI=BT.detect_rssi()
                 if RSSI == "can't detect key":
@@ -179,19 +182,14 @@ def Task(mode, obj, conn_dict):
                     conn_dict['STM32_2'].sendall("Send Outdoor Data".encode(encoding='utf8'))
                     mutex.acquire()
                     State.changeUserState()     # change to "Not at home"
-                    # print("in STM32_1")
-                    # print("out_humidity=%f  out_temprature=%f "%(out_humidity,out_temprature))
-                    line_message = "[INDOOR]\n    humidity:{}\n    temprature:{}\n[OUTDOOR]\n    humidity:{}\n    temprature:{}\n".format(humidity,temprature,out_humidity,out_temprature)
-
-                    if out_humidity >= 50:
-                        line_message += "\nPlease remember to bring the umbrella with you^^\n"
-
-                    # line_message="humidity:%d temprature:%d out door humidity:%d outdoor temprature:%d"%(humidity,temprature,out_humidity,out_temprature)
+                    print("in STM32_1")
+                    print("out_humidity=%f  out_temprature=%f "%(out_humidity,out_temprature))
+                    line_message="humidity:%d temprature:%d out door humidity:%d outdoor temprature:%d"%(humidity,temprature,out_humidity,out_temprature)
                     sendLineMessage(RC.getLineKey(),line_message)
                 elif RSSI=="can't detect key":
                     State.changeUserState()
                 else:
-                    # print("Seems it needs to do nothing")
+                    print("Seems it needs to do nothing")
                     '''
                     maybe:
                         Someone gets out when you're at home
@@ -205,7 +203,7 @@ def Task(mode, obj, conn_dict):
                 elif RSSI=="inside the room":       # correct state
                     State.atHome=True
                 else :
-                    thief("close")
+                    thief()
 
         elif message == "door stopped":
             print(message)
@@ -221,3 +219,5 @@ def Task(mode, obj, conn_dict):
     elif mode == "STM32_2": 
         out_humidity,out_temprature = obj['h'],obj['t']
         mutex.release()
+
+
