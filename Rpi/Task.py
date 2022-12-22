@@ -8,7 +8,7 @@ from state import State
 import bt_full as BT
 from send_Line_notification import sendLineMessage
 from read_config import RC
-
+from TodoList import TodoList
 
 mutex = threading.Lock()
 mutex.acquire()
@@ -23,6 +23,8 @@ def thief():
 def Task(mode, obj, conn_dict):
     global mutex
     global out_humidity, out_temprature
+
+    print("-----",mode,obj,"-----")
 
     if mode == "phone requests for config":
         RC.reRead()
@@ -134,7 +136,7 @@ def Task(mode, obj, conn_dict):
         data = json.dumps(data).encode('utf-8') + b'\n'
         conn_dict['Phone'].send(data)
 
-        os.system("rm mylog.log")
+        
 
         while True:
             data = conn_dict['Phone'].recv(1024).decode('utf-8')
@@ -142,21 +144,54 @@ def Task(mode, obj, conn_dict):
             print(obj, 'msg' in obj.keys())
             if 'msg' in obj.keys(): 
                 process.send("\n")
+                process.expect(pexpect.EOF)
                 break
-
-        process.expect(pexpect.EOF)
-
         #############################################################################
 
 
-        time.sleep(3)
+        # time.sleep(3)
 
         RC.reRead()
         print(RC.cf)
         data = json.dumps(RC.cf).encode('utf-8') + b'\n'
         conn_dict['Phone'].send(data)
-
+        
+        os.system("cat mylog.log")
+        os.system("rm mylog.log")
         return
+
+    elif mode == "phone requests for todoList":
+        with open("./todoList.json","rb") as f:
+            data = json.dumps(json.load(f)).encode('utf-8') + b'\n'
+            conn_dict['Phone'].send(data)
+        return
+
+    elif mode == "phone requests for adding new todo":
+        TodoList.reRead()
+        TodoList.addTodo(obj['data'])
+        data = json.dumps(TodoList.todoList).encode('utf-8') + b'\n'
+        conn_dict['Phone'].send(data)
+        return
+
+    elif mode == "phone requests for deleting todo at index i":
+        TodoList.reRead()
+        TodoList.deleteTodo(int(obj['index']))
+        data = json.dumps(TodoList.todoList).encode('utf-8') + b'\n'
+        conn_dict['Phone'].send(data)
+        return
+
+    elif mode == "phone requests for editing todo of id i":
+        TodoList.reRead()
+        TodoList.editTodo(obj['id'],obj['data'])
+        data = json.dumps(TodoList.todoList).encode('utf-8') + b'\n'
+        conn_dict['Phone'].send(data)
+
+    elif mode == "phone requests for changing status of id i":
+        TodoList.reRead()
+        TodoList.changeStatus(obj['id'])
+        data = json.dumps(TodoList.todoList).encode('utf-8') + b'\n'
+        conn_dict['Phone'].send(data)
+    
 
     elif mode == "STM32_1":
         # received data: int len = sprintf(acc_json,"{\"h\":%f,\"t\":%f,\"m\":%s}",humidity,temprature,message);

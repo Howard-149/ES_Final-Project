@@ -87,16 +87,20 @@ class RC:
             setconfig_usage_with_example("port","port","[Int]")
 
         if RC.getUserPhoneKey() == "None":
-            checking = False
             print("Please set config [{}] first".format("phone MAC address"))
             print("command:")
             print("     python set_config.py --{}".format("set_user_phone_key"))
             print("     python set_config.py --{} {}".format("user_phone_key","[Your phone MAC address]"))
 
         if RC.getLineKey() == "None":
-            checking = False
             setconfig_usage_with_example("Line authorization key","user_line_key","[Your Line authorization key]")
         
+        if RC.getRSSIThreshold() == "None":
+            print("Please set config [{}] first".format("RSSI Threshold"))
+            print("command:")
+            print("     python set_config.py --{}".format("set_bluetooth_threshold"))
+
+
         if not checking:
             print("######################################################################")
             print("More information for setting config :")

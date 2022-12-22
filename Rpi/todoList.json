@@ -1,1 +1,7 @@
-{"todoList": ["test1", "test2", "test3"]}
+[
+    {"id": "0", "status": "0", "task": "1"},
+    {"id": "1", "status": "0", "task": "2"},
+    {"id": "2", "status": "0", "task": "3"},
+    {"id": "3", "status": "0", "task": "addTodoTesting"}, 
+    {"id": "4", "status": "0", "task": "addTodoTesting"}
+]
