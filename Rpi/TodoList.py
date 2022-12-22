@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 class TodoList:
     
@@ -16,7 +17,6 @@ class TodoList:
 
     @staticmethod
     def addTodo(task):
-        TodoList.reRead()
         usedID = []
         for tl in TodoList.todoList:
             usedID.append(int(tl['id']))
@@ -37,14 +37,12 @@ class TodoList:
 
     @staticmethod
     def deleteTodo(index):
-        TodoList.reRead()
         TodoList.todoList.pop(index)
         with open("./todoList.json",'w') as f:
             json.dump(TodoList.todoList,f)
         return
 
     def editTodo(id, task):
-        TodoList.reRead()
         for todo in TodoList.todoList:
             if todo['id'] == id:
                 todo['task'] = task
@@ -53,15 +51,12 @@ class TodoList:
             json.dump(TodoList.todoList,f)
         return
     
-    def changeStatus(id):
-        TodoList.reRead()
+    def changeStatus(id,status):
         for todo in TodoList.todoList:
             if todo["id"] == id:
-                if todo["status"] == "0":
-                    todo["status"] = "1"
-                elif todo["status"] == "1":
-                    todo["status"] = "0"
+                todo['status'] = status
                 break
+        
         with open("./todoList.json",'w') as f:
             json.dump(TodoList.todoList,f)
         return

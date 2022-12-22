@@ -4,6 +4,7 @@ import requests
 import shutil
 
 from read_config import RC
+from TodoList import TodoList
 
 def sendLineMessage(token,message = None,image = None):
     RC.initialize()
@@ -44,4 +45,18 @@ def sendLineMessage(token,message = None,image = None):
 
 if __name__ == "__main__":
     RC.initialize()
-    sendLineMessage(RC.getLineKey(),"test","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcxYjqWm-l89uuhZCDY4gFtNvaNe3vWxGcTQ&usqp=CAU")
+    TodoList.reRead()
+                    
+    line_message="Todo-List : \n"
+    for todo in TodoList.todoList:
+        if todo["status"] == "0":
+            line_message += "    ☐  "
+        elif todo["status"] == "1":
+            line_message += "    ☑  "
+        
+        line_message += todo["task"]
+        line_message += "\n"
+    
+        
+    sendLineMessage("dOkC46UJeLY1PC3OlFCIFxRh5Y997BNXe3JA2ydHLxU",line_message)
+    # sendLineMessage(RC.getLineKey(),line_message)

@@ -15,16 +15,18 @@ mutex.acquire()
 out_humidity, out_temprature=0,0
 
 
-def thief():
-    print("Probably thief get in !!!")
-    sendLineMessage(RC.getLineKey(),"Probably thief get in !!!")
+TodoList.reRead()
+
+def thief(action):
+    print("Someone get in!!!")
+    print("Probably thief {} the door!!!".format(action))
+    sendLineMessage(RC.getLineKey(),"Someone get in!\nProbably thief {} the door !!!".format(action),
+    "https://images.twgreatdaily.com/images/image/cZM/cZM9CW8BMH2_cNUgCq82.jpg")
     return
 
 def Task(mode, obj, conn_dict):
     global mutex
     global out_humidity, out_temprature
-
-    print("-----",mode,obj,"-----")
 
     if mode == "phone requests for config":
         RC.reRead()
@@ -188,9 +190,8 @@ def Task(mode, obj, conn_dict):
 
     elif mode == "phone requests for changing status of id i":
         TodoList.reRead()
-        TodoList.changeStatus(obj['id'])
-        data = json.dumps(TodoList.todoList).encode('utf-8') + b'\n'
-        conn_dict['Phone'].send(data)
+        TodoList.changeStatus(obj['id'],obj['status'])
+        
     
 
     elif mode == "STM32_1":
@@ -202,7 +203,7 @@ def Task(mode, obj, conn_dict):
             if State.getUserState() == "Not At Home":
                 RSSI = BT.detect_rssi()
                 if RSSI == "can't detect key":      # Someone gets in while you're out
-                    thief()
+                    thief("open")
                 else:
                     print("rssi start =",RSSI)      # User arrives home
                     print("message =",message)
@@ -217,10 +218,25 @@ def Task(mode, obj, conn_dict):
                     conn_dict['STM32_2'].sendall("Send Outdoor Data".encode(encoding='utf8'))
                     mutex.acquire()
                     State.changeUserState()     # change to "Not at home"
-                    print("in STM32_1")
-                    print("out_humidity=%f  out_temprature=%f "%(out_humidity,out_temprature))
-                    line_message="humidity:%d temprature:%d out door humidity:%d outdoor temprature:%d"%(humidity,temprature,out_humidity,out_temprature)
+                    line_message = "[INDOOR]\n    humidity:{}\n    temprature:{}\n[OUTDOOR]\n    humidity:{}\n    temprature:{}\n".format(humidity,temprature,out_humidity,out_temprature)
+                    if out_humidity >= 50:  line_message += "\nPlease remember to bring the umbrella with you^^\n"
                     sendLineMessage(RC.getLineKey(),line_message)
+                    #############################no test##############################
+                    TodoList.reRead()
+                    
+                    line_message="Todo-List : \n"
+                    for todo in TodoList.todoList:
+                        if todo["status"] == "0":
+                            line_message += "    ☐  "
+                        elif todo["status"] == "1":
+                            line_message += "    ☑  "
+                        
+                        line_message += todo["task"]
+                        line_message += "\n"
+                    
+                        
+                    sendLineMessage(RC.getLineKey(),line_message)
+                    ###################################################################
                 elif RSSI=="can't detect key":
                     State.changeUserState()
                 else:
@@ -238,7 +254,7 @@ def Task(mode, obj, conn_dict):
                 elif RSSI=="inside the room":       # correct state
                     State.atHome=True
                 else :
-                    thief()
+                    thief("close")
 
         elif message == "door stopped":
             print(message)
