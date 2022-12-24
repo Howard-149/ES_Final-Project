@@ -10,8 +10,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 # account = input("Account: ")
 # password = getpass()
-account = "ponywang10@gmail.com"
-password = "Pony910506"
+account = ""
+password = ""
 
 driver = webdriver.Chrome()
 driver.get('https://notify-bot.line.me/en/')
